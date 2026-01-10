@@ -85,7 +85,7 @@ const DashboardPage = () => {
           )}
         </div>
         <h3 className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-2">{title}</h3>
-        <p className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white">
+        <p className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white overflow-wrap-anywhere">
           {formatAmount(value)}
         </p>
         <div className="mt-4 h-1 w-full bg-gray-200 dark:bg-slate-700 rounded-full overflow-hidden">
