@@ -245,7 +245,7 @@ const SettingsPage = () => {
             <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">Total Expenses</p>
           </div>
           <div className="text-center p-4 bg-purple-50 dark:bg-purple-900/20 rounded-xl">
-            <p className="text-2xl sm:text-3xl font-bold text-purple-600 dark:text-purple-400">
+            <p className="text-2xl sm:text-3xl font-bold text-purple-600 dark:text-purple-400 overflow-wrap-anywhere">
               {formatAmount(stats.totalAmount)}
             </p>
             <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">Total Spent</p>
