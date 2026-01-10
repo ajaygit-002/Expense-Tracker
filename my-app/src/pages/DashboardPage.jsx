@@ -1,16 +1,26 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useExpenses, useTheme } from '../context/ExpenseContext';
 import { PieChart, Pie, Cell, ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip, Legend } from 'recharts';
 import gsap from 'gsap';
 
 const DashboardPage = () => {
-  const { expenses, income, formatAmount, getCurrencySymbol } = useExpenses();
+  const { expenses, income, setIncome, formatAmount, getCurrencySymbol } = useExpenses();
   const { theme } = useTheme();
   const cardsRef = useRef([]);
+  const [showIncomeModal, setShowIncomeModal] = useState(false);
+  const [tempIncome, setTempIncome] = useState(income);
+  const [showSuccess, setShowSuccess] = useState(false);
 
   const totalExpenses = expenses.reduce((sum, exp) => sum + parseFloat(exp.amount), 0);
   const balance = income - totalExpenses;
+
+  const handleUpdateIncome = () => {
+    setIncome(parseFloat(tempIncome));
+    setShowIncomeModal(false);
+    setShowSuccess(true);
+    setTimeout(() => setShowSuccess(false), 3000);
+  };
 
   // Category-wise expenses
   const categoryData = expenses.reduce((acc, exp) => {
@@ -62,34 +72,46 @@ const DashboardPage = () => {
     });
   }, []);
 
-  const StatCard = ({ title, value, icon, gradient, index, trend, color }) => (
+  const StatCard = ({ title, value, icon, gradient, index, trend, color, onClick, editable }) => (
     <div
       ref={(el) => (cardsRef.current[index] = el)}
-      className={`relative overflow-hidden rounded-3xl p-6 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-1 group`}
+      onClick={editable ? onClick : undefined}
+      className={`relative overflow-hidden rounded-2xl h-full bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm border border-slate-200 dark:border-slate-700 shadow-sm hover:shadow-xl transition-all duration-300 hover:-translate-y-1 group ${
+        editable ? 'cursor-pointer' : ''
+      }`}
     >
-      <div className={`absolute top-0 right-0 w-32 h-32 bg-linear-to-br ${gradient} opacity-5 rounded-full -mr-16 -mt-16 group-hover:scale-150 transition-transform duration-500`} />
-      <div className="relative">
-        <div className="flex items-center justify-between mb-4">
-          <div className={`w-14 h-14 rounded-2xl bg-linear-to-br ${gradient} flex items-center justify-center shadow-md`}>
+      <div className={`absolute inset-0 bg-linear-to-br ${gradient} opacity-[0.03] dark:opacity-[0.05] group-hover:opacity-[0.06] dark:group-hover:opacity-[0.08] transition-opacity duration-300`} />
+      <div className="relative p-6 h-full flex flex-col">
+        <div className="flex items-start justify-between mb-6">
+          <div className={`w-14 h-14 rounded-xl bg-linear-to-br ${gradient} flex items-center justify-center shadow-lg shadow-purple-500/20 group-hover:scale-110 transition-transform duration-300`}>
             <span className="text-3xl">{icon}</span>
           </div>
-          {trend && (
-            <div className="flex items-center gap-1">
-              <span className={`text-lg ${trend > 0 ? 'text-green-500' : 'text-red-500'}`}>
+          {editable && (
+            <button className="p-2 rounded-lg bg-slate-100/50 dark:bg-slate-700/50 hover:bg-slate-200 dark:hover:bg-slate-600 transition-all duration-200 shadow-sm">
+              <span className="text-lg">✏️</span>
+            </button>
+          )}
+          {trend && !editable && (
+            <div className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-slate-50 dark:bg-slate-700/50">
+              <span className={`text-base ${trend > 0 ? 'text-green-500' : 'text-red-500'}`}>
                 {trend > 0 ? '↗' : '↘'}
               </span>
-              <span className={`text-sm font-bold ${trend > 0 ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}`}>
+              <span className={`text-xs font-bold ${trend > 0 ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}`}>
                 {trend > 0 ? '+' : ''}{trend}%
               </span>
             </div>
           )}
         </div>
-        <h3 className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-2">{title}</h3>
-        <p className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white overflow-wrap-anywhere">
-          {formatAmount(value)}
-        </p>
-        <div className="mt-4 h-1 w-full bg-gray-200 dark:bg-slate-700 rounded-full overflow-hidden">
-          <div className={`h-full bg-linear-to-r ${gradient} rounded-full`} style={{width: '70%'}}></div>
+        <div className="flex-1">
+          <h3 className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-3">
+            {title} {editable && <span className="text-blue-500 normal-case font-normal">(Click to edit)</span>}
+          </h3>
+          <p className="text-3xl sm:text-4xl font-bold text-slate-900 dark:text-white overflow-wrap-anywhere leading-tight">
+            {formatAmount(value)}
+          </p>
+        </div>
+        <div className="mt-6 h-1.5 w-full bg-slate-100 dark:bg-slate-700 rounded-full overflow-hidden">
+          <div className={`h-full bg-linear-to-r ${gradient} rounded-full transition-all duration-500`} style={{width: '70%'}}></div>
         </div>
       </div>
     </div>
@@ -97,49 +119,113 @@ const DashboardPage = () => {
 
   return (
     <div className="space-y-8 animate-fadeIn">
-      {/* Header */}
-      <div className="flex flex-col gap-4 mb-6">
-        <div className="flex items-start gap-3">
-          <div className="w-12 h-12 sm:w-14 sm:h-14 bg-linear-to-br from-blue-500 to-purple-600 rounded-2xl flex items-center justify-center shadow-lg shrink-0">
-            <span className="text-2xl sm:text-3xl">💰</span>
-          </div>
-          <div className="flex-1 min-w-0">
-            <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 dark:text-white mb-1">
-              Dashboard
-            </h1>
-            <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400 truncate">
-              {new Date().toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' })}
-            </p>
+      {/* Success Notification */}
+      {showSuccess && (
+        <div className="fixed top-24 right-4 sm:right-8 z-50 bg-green-500 text-white px-6 py-4 rounded-xl shadow-2xl animate-slideIn flex items-center space-x-3">
+          <span className="text-2xl">✅</span>
+          <p className="font-semibold">Income updated successfully!</p>
+        </div>
+      )}
+
+      {/* Income Edit Modal */}
+      {showIncomeModal && (
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="bg-white dark:bg-slate-800 rounded-2xl p-8 max-w-md w-full shadow-2xl animate-scaleIn">
+            <div className="text-center mb-6">
+              <div className="w-16 h-16 bg-linear-to-br from-green-400 to-emerald-600 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                <span className="text-4xl">💰</span>
+              </div>
+              <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
+                Update Total Income
+              </h3>
+              <p className="text-gray-600 dark:text-gray-400">
+                Set your monthly or total income amount
+              </p>
+            </div>
+            
+            <div className="mb-6">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                Income Amount
+              </label>
+              <div className="relative">
+                <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 dark:text-gray-400 text-lg">
+                  {getCurrencySymbol()}
+                </span>
+                <input
+                  type="number"
+                  value={tempIncome}
+                  onChange={(e) => setTempIncome(e.target.value)}
+                  step="0.01"
+                  min="0"
+                  placeholder="0.00"
+                  className="w-full pl-10 pr-4 py-3 rounded-xl border-2 border-gray-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all text-lg font-semibold"
+                  autoFocus
+                />
+              </div>
+            </div>
+
+            <div className="flex gap-3">
+              <button
+                onClick={handleUpdateIncome}
+                className="flex-1 px-6 py-3 bg-linear-to-r from-green-500 to-emerald-600 text-white rounded-xl font-semibold hover:shadow-lg hover:scale-105 transition-all"
+              >
+                Update Income
+              </button>
+              <button
+                onClick={() => {
+                  setShowIncomeModal(false);
+                  setTempIncome(income);
+                }}
+                className="flex-1 px-6 py-3 bg-gray-200 dark:bg-slate-700 text-gray-700 dark:text-gray-300 rounded-xl font-semibold hover:bg-gray-300 dark:hover:bg-slate-600 transition-colors"
+              >
+                Cancel
+              </button>
+            </div>
           </div>
         </div>
-        <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
-          <button className="flex-1 sm:flex-none px-4 py-2.5 bg-white dark:bg-slate-800 border border-gray-300 dark:border-slate-600 text-gray-700 dark:text-gray-300 rounded-xl font-medium hover:bg-gray-50 dark:hover:bg-slate-700 transition-colors text-sm sm:text-base">
-            📊 Export
+      )}
+
+      {/* Header */}
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6 mb-8">
+        <div>
+          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-slate-900 dark:text-white mb-2">
+            Dashboard
+          </h1>
+          <p className="text-sm sm:text-base text-slate-600 dark:text-slate-400 font-medium">
+            {new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' })}
+          </p>
+        </div>
+        <div className="flex flex-col sm:flex-row gap-3">
+          <button className="px-6 py-3 bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 rounded-xl font-semibold hover:bg-slate-50 dark:hover:bg-slate-700 transition-all duration-300 shadow-sm hover:shadow flex items-center justify-center gap-2">
+            <span className="text-xl">📄</span>
+            <span>Export Data</span>
           </button>
           <Link
             to="/add-expense"
-            className="flex-1 sm:flex-none px-5 py-2.5 bg-linear-to-r from-blue-500 to-purple-600 text-white rounded-xl font-medium shadow-lg shadow-purple-500/30 hover:shadow-xl hover:shadow-purple-500/40 hover:scale-105 transition-all duration-300 flex items-center justify-center gap-2 text-sm sm:text-base"
+            className="px-6 py-3 bg-linear-to-r from-blue-600 to-purple-600 text-white rounded-xl font-semibold shadow-lg shadow-purple-500/25 hover:shadow-xl hover:shadow-purple-500/30 hover:scale-105 transition-all duration-300 flex items-center justify-center gap-2"
           >
-            <span className="text-lg">+</span> Add Expense
+            <span className="text-xl">+</span>
+            <span>Add Expense</span>
           </Link>
         </div>
       </div>
 
       {/* Summary Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
         <StatCard
           title="Total Income"
           value={income}
           icon="💰"
-          gradient="from-green-400 to-emerald-600"
+          gradient="from-green-500 to-emerald-600"
           index={0}
-          trend={12}
+          editable={true}
+          onClick={() => setShowIncomeModal(true)}
         />
         <StatCard
           title="Total Expenses"
           value={totalExpenses}
           icon="💸"
-          gradient="from-red-400 to-pink-600"
+          gradient="from-red-500 to-pink-600"
           index={1}
           trend={-5}
         />
@@ -147,28 +233,27 @@ const DashboardPage = () => {
           title="Current Balance"
           value={balance}
           icon="💵"
-          gradient="from-blue-400 to-indigo-600"
+          gradient="from-blue-500 to-indigo-600"
           index={2}
           trend={8}
         />
       </div>
 
       {/* Charts Section */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
         {/* Category Pie Chart */}
-        <div className="bg-white dark:bg-slate-800 rounded-3xl p-6 border border-gray-200 dark:border-slate-700 shadow-lg">
-          <div className="flex items-center justify-between mb-6">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-blue-500/10 dark:bg-blue-500/20 rounded-xl flex items-center justify-center">
-                <span className="text-xl">📊</span>
-              </div>
-              <h2 className="text-xl font-bold text-gray-900 dark:text-white">
-                Expenses by Category
-              </h2>
+        <div className="bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm rounded-2xl p-6 border border-slate-200 dark:border-slate-700 shadow-sm h-112.5 flex flex-col">
+          <div className="flex items-center gap-3 mb-6">
+            <div className="w-12 h-12 bg-linear-to-br from-blue-500 to-purple-600 rounded-xl flex items-center justify-center shadow-lg shadow-purple-500/20">
+              <span className="text-2xl">📊</span>
             </div>
+            <h2 className="text-xl font-bold text-slate-900 dark:text-white">
+              Expenses by Category
+            </h2>
           </div>
+          <div className="flex-1 flex items-center justify-center">
           {categoryData.length > 0 ? (
-            <ResponsiveContainer width="100%" height={300}>
+            <ResponsiveContainer width="100%" height="100%">
               <PieChart>
                 <Pie
                   data={categoryData}
@@ -176,7 +261,7 @@ const DashboardPage = () => {
                   cy="50%"
                   labelLine={false}
                   label={({ category, percent }) => `${category} ${(percent * 100).toFixed(0)}%`}
-                  outerRadius={80}
+                  outerRadius={100}
                   fill="#8884d8"
                   dataKey="value"
                 >
@@ -184,33 +269,48 @@ const DashboardPage = () => {
                     <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                   ))}
                 </Pie>
-                <Tooltip />
+                <Tooltip 
+                  contentStyle={{
+                    backgroundColor: theme === 'dark' ? '#1e293b' : '#ffffff',
+                    border: 'none',
+                    borderRadius: '12px',
+                    boxShadow: '0 10px 40px rgba(0,0,0,0.2)',
+                  }}
+                />
               </PieChart>
             </ResponsiveContainer>
           ) : (
-            <div className="h-75 flex items-center justify-center text-gray-500 dark:text-gray-400">
-              No expense data available
+            <div className="text-center text-slate-500 dark:text-slate-400">
+              <p className="text-4xl mb-4">📊</p>
+              <p className="font-medium">No expense data available</p>
             </div>
           )}
+          </div>
         </div>
 
         {/* Monthly Trend */}
-        <div className="bg-white dark:bg-slate-800 rounded-3xl p-6 border border-gray-200 dark:border-slate-700 shadow-lg">
-          <div className="flex items-center justify-between mb-6">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-purple-500/10 dark:bg-purple-500/20 rounded-xl flex items-center justify-center">
-                <span className="text-xl">📈</span>
-              </div>
-              <h2 className="text-xl font-bold text-gray-900 dark:text-white">
-                Monthly Trend
-              </h2>
+        <div className="bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm rounded-2xl p-6 border border-slate-200 dark:border-slate-700 shadow-sm h-112.5 flex flex-col">
+          <div className="flex items-center gap-3 mb-6">
+            <div className="w-12 h-12 bg-linear-to-br from-purple-500 to-pink-600 rounded-xl flex items-center justify-center shadow-lg shadow-pink-500/20">
+              <span className="text-2xl">📈</span>
             </div>
+            <h2 className="text-xl font-bold text-slate-900 dark:text-white">
+              Monthly Trend
+            </h2>
           </div>
+          <div className="flex-1">
           {monthlyData.some(d => d.expenses > 0) ? (
-            <ResponsiveContainer width="100%" height={300}>
+            <ResponsiveContainer width="100%" height="100%">
               <BarChart data={monthlyData}>
-                <XAxis dataKey="name" stroke={theme === 'dark' ? '#9ca3af' : '#6b7280'} />
-                <YAxis stroke={theme === 'dark' ? '#9ca3af' : '#6b7280'} />
+                <XAxis 
+                  dataKey="name" 
+                  stroke={theme === 'dark' ? '#94a3b8' : '#64748b'}
+                  style={{ fontSize: '12px', fontWeight: '500' }}
+                />
+                <YAxis 
+                  stroke={theme === 'dark' ? '#94a3b8' : '#64748b'}
+                  style={{ fontSize: '12px', fontWeight: '500' }}
+                />
                 <Tooltip
                   contentStyle={{
                     backgroundColor: theme === 'dark' ? '#1e293b' : '#ffffff',
@@ -222,36 +322,40 @@ const DashboardPage = () => {
                 <Bar dataKey="expenses" fill="url(#colorGradient)" radius={[8, 8, 0, 0]} />
                 <defs>
                   <linearGradient id="colorGradient" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stopColor="#3b82f6" />
-                    <stop offset="100%" stopColor="#8b5cf6" />
+                    <stop offset="0%" stopColor="#8b5cf6" stopOpacity={0.9} />
+                    <stop offset="100%" stopColor="#ec4899" stopOpacity={0.9} />
                   </linearGradient>
                 </defs>
               </BarChart>
             </ResponsiveContainer>
           ) : (
-            <div className="h-75 flex items-center justify-center text-gray-500 dark:text-gray-400">
-              No trend data available
+            <div className="h-full flex items-center justify-center text-center text-slate-500 dark:text-slate-400">
+              <div>
+                <p className="text-4xl mb-4">📈</p>
+                <p className="font-medium">No trend data available</p>
+              </div>
             </div>
           )}
+          </div>
         </div>
       </div>
 
       {/* Recent Transactions */}
-      <div className="bg-white dark:bg-slate-800 rounded-3xl p-6 border border-gray-200 dark:border-slate-700 shadow-lg">
+      <div className="bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm rounded-2xl p-6 border border-slate-200 dark:border-slate-700 shadow-sm">
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-green-500/10 dark:bg-green-500/20 rounded-xl flex items-center justify-center">
-              <span className="text-xl">🔄</span>
+            <div className="w-12 h-12 bg-linear-to-br from-green-500 to-emerald-600 rounded-xl flex items-center justify-center shadow-lg shadow-green-500/20">
+              <span className="text-2xl">🔄</span>
             </div>
-            <h2 className="text-xl font-bold text-gray-900 dark:text-white">
+            <h2 className="text-xl font-bold text-slate-900 dark:text-white">
               Recent Transactions
             </h2>
           </div>
           <Link
             to="/expenses"
-            className="px-4 py-2 bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 rounded-xl hover:bg-blue-100 dark:hover:bg-blue-900/30 transition-colors font-medium text-sm"
+            className="px-5 py-2.5 bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300 rounded-xl hover:bg-slate-200 dark:hover:bg-slate-600 transition-all duration-300 font-semibold text-sm shadow-sm hover:shadow"
           >
-            View All
+            View All →
           </Link>
         </div>
         {recentTransactions.length > 0 ? (
@@ -259,7 +363,7 @@ const DashboardPage = () => {
             {recentTransactions.map((transaction) => (
               <div
                 key={transaction.id}
-                className="flex items-center justify-between p-4 rounded-2xl bg-gray-50 dark:bg-slate-700/30 hover:bg-gray-100 dark:hover:bg-slate-700/50 transition-all duration-200 border border-transparent hover:border-gray-200 dark:hover:border-slate-600"
+                className="flex items-center justify-between p-5 rounded-xl bg-slate-50/50 dark:bg-slate-700/30 hover:bg-slate-100 dark:hover:bg-slate-700/50 transition-all duration-300 border border-slate-100 dark:border-slate-700 hover:border-slate-200 dark:hover:border-slate-600 hover:shadow-sm group"
               >
                 <div className="flex items-center space-x-4">
                   <div className="w-12 h-12 rounded-2xl bg-linear-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white font-bold text-lg shadow-md">
