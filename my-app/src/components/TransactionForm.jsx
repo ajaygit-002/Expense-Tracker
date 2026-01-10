@@ -216,8 +216,8 @@ export const TransactionForm = ({ transaction = null, onClose = null }) => {
             type="submit"
             className={`flex-1 font-semibold py-3 px-4 rounded-lg transition-all duration-300 transform hover:scale-105 active:scale-95 ${
               isDark
-                ? 'bg-gradient-to-r from-purple-600 to-indigo-600 text-white hover:shadow-lg hover:shadow-purple-500/50'
-                : 'bg-gradient-to-r from-blue-600 to-purple-600 text-white hover:shadow-lg hover:shadow-blue-500/50'
+                ? 'bg-linear-to-r from-purple-600 to-indigo-600 text-white hover:shadow-lg hover:shadow-purple-500/50'
+                : 'bg-linear-to-r from-blue-600 to-purple-600 text-white hover:shadow-lg hover:shadow-blue-500/50'
             }`}
           >
             {transaction ? '💾 Update Transaction' : '➕ Add Transaction'}

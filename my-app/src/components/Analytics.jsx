@@ -108,7 +108,7 @@ export const Analytics = () => {
               📈 Category Breakdown
               {activeTab === 'category' && (
                 <div className={`absolute bottom-0 left-0 right-0 h-1 ${
-                  isDark ? 'bg-gradient-to-r from-purple-500 to-indigo-500' : 'bg-gradient-to-r from-blue-500 to-purple-500'
+                  isDark ? 'bg-linear-to-r from-purple-500 to-indigo-500' : 'bg-linear-to-r from-blue-500 to-purple-500'
                 } rounded-full animate-slideUp`}></div>
               )}
             </button>
@@ -127,7 +127,7 @@ export const Analytics = () => {
               📅 Monthly Summary
               {activeTab === 'monthly' && (
                 <div className={`absolute bottom-0 left-0 right-0 h-1 ${
-                  isDark ? 'bg-gradient-to-r from-purple-500 to-indigo-500' : 'bg-gradient-to-r from-blue-500 to-purple-500'
+                  isDark ? 'bg-linear-to-r from-purple-500 to-indigo-500' : 'bg-linear-to-r from-blue-500 to-purple-500'
                 } rounded-full animate-slideUp`}></div>
               )}
             </button>

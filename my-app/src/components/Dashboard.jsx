@@ -53,24 +53,24 @@ export const Dashboard = () => {
         title="Total Income"
         amount={totalIncome}
         icon="📈"
-        gradient="bg-gradient-to-br from-green-50 to-green-100 border-green-200"
-        darkGradient="bg-gradient-to-br from-green-900/30 to-green-800/30 border-green-700"
+        gradient="bg-linear-to-br from-green-50 to-green-100 border-green-200"
+        darkGradient="bg-linear-to-br from-green-900/30 to-green-800/30 border-green-700"
         delay={0}
       />
       <StatCard
         title="Total Expenses"
         amount={totalExpenses}
         icon="📉"
-        gradient="bg-gradient-to-br from-red-50 to-red-100 border-red-200"
-        darkGradient="bg-gradient-to-br from-red-900/30 to-red-800/30 border-red-700"
+        gradient="bg-linear-to-br from-red-50 to-red-100 border-red-200"
+        darkGradient="bg-linear-to-br from-red-900/30 to-red-800/30 border-red-700"
         delay={0.1}
       />
       <StatCard
         title="Balance"
         amount={balance}
         icon={balance >= 0 ? '💰' : '⚠️'}
-        gradient={balance >= 0 ? 'bg-gradient-to-br from-blue-50 to-blue-100 border-blue-200' : 'bg-gradient-to-br from-orange-50 to-orange-100 border-orange-200'}
-        darkGradient={balance >= 0 ? 'bg-gradient-to-br from-blue-900/30 to-blue-800/30 border-blue-700' : 'bg-gradient-to-br from-orange-900/30 to-orange-800/30 border-orange-700'}
+        gradient={balance >= 0 ? 'bg-linear-to-br from-blue-50 to-blue-100 border-blue-200' : 'bg-linear-to-br from-orange-50 to-orange-100 border-orange-200'}
+        darkGradient={balance >= 0 ? 'bg-linear-to-br from-blue-900/30 to-blue-800/30 border-blue-700' : 'bg-linear-to-br from-orange-900/30 to-orange-800/30 border-orange-700'}
         delay={0.2}
       />
     </div>
