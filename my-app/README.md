@@ -6,7 +6,14 @@ A modern, responsive expense tracking application built with React and Vite. Man
 
 ### 1. 📊 User Interface
 - **Clean and Modern Design**: Intuitive interface with a professional look
-- **Responsive Design**: Fully responsive for mobile, tablet, and desktop devices
+- **Fully Responsive Design**: 
+  - Mobile-first approach with optimized layouts
+  - Breakpoints: Mobile (< 640px), Tablet (640px - 1024px), Desktop (> 1024px)
+  - Touch-friendly buttons and controls
+  - Adaptive grid layouts (1-column mobile, 2-column tablet, 3-column desktop)
+  - Responsive typography and spacing
+  - Collapsible mobile navigation
+  - Card-based mobile views, table-based desktop views
 - **Dashboard**: Real-time display of total balance, income, and expenses
 - **Tab-based Navigation**: Easy navigation between Dashboard, Transactions, and Analytics
 
@@ -53,7 +60,19 @@ A modern, responsive expense tracking application built with React and Vite. Man
 - **Auto-load**: Data is automatically loaded when you refresh the page
 - **No Backend Required**: Everything works offline
 
-### 7. 🎨 Tech Stack
+### 7. � Multi-Currency Support
+- **20+ Currencies**: Support for major world currencies
+- **Country-Based Selection**: Choose currency by country name
+- **Dynamic Display**: All amounts automatically display in selected currency
+- **Search Functionality**: Quickly find your currency
+- **Supported Currencies**:
+  - USD 🇺🇸, EUR 🇪🇺, GBP 🇬🇧, JPY 🇯🇵, INR 🇮🇳
+  - CNY 🇨🇳, AUD 🇦🇺, CAD 🇨🇦, CHF 🇨🇭, SGD 🇸🇬
+  - AED 🇦🇪, SAR 🇸🇦, MXN 🇲🇽, BRL 🇧🇷, ZAR 🇿🇦
+  - KRW 🇰🇷, RUB 🇷🇺, TRY 🇹🇷, SEK 🇸🇪, NOK 🇳🇴
+- **Responsive Grid**: Currency selector adapts to all screen sizes
+
+### 8. �🎨 Tech Stack
 - **Frontend**: React.js with Hooks
 - **Build Tool**: Vite
 - **Styling**: Tailwind CSS
@@ -176,6 +195,15 @@ The **Dashboard** displays:
 - **Balance**: Income minus expenses
 - Quick access to add new transactions
 
+### Managing Currency
+
+1. Go to the **Settings** page
+2. Scroll to the **Currency** section
+3. Use the search box to find your country or currency
+4. Click on your desired currency
+5. All amounts throughout the app will update automatically
+6. Your currency preference is saved locally
+
 ## 🔒 Data Storage
 
 - All data is stored in **browser localStorage**
@@ -238,7 +266,25 @@ npm run dev -- --port 5174
 - Clearing browser data will delete all transactions
 - Consider exporting data before clearing browser storage
 
-## 🚀 Future Enhancements
+## 🚀 Recent Updates
+
+### Multi-Currency Support (Latest) 🌍
+- Added support for 20+ major world currencies
+- Country-based currency selection with flags
+- Real-time currency display across all pages
+- Searchable currency selector
+- Fully responsive currency grid (1-col mobile, 2-col tablet, 3-col desktop)
+- Automatic formatting for all amounts
+
+### Responsive Design Enhancements 📱
+- Mobile-first responsive layouts throughout the app
+- Adaptive breakpoints for all screen sizes
+- Touch-optimized buttons and controls
+- Card view for mobile, table view for desktop
+- Responsive typography and spacing
+- Collapsible navigation on mobile devices
+
+## 🔮 Future Enhancements
 
 Possible improvements:
 - Export data to CSV/PDF

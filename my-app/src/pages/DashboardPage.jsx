@@ -5,7 +5,7 @@ import { PieChart, Pie, Cell, ResponsiveContainer, BarChart, Bar, XAxis, YAxis, 
 import gsap from 'gsap';
 
 const DashboardPage = () => {
-  const { expenses, income } = useExpenses();
+  const { expenses, income, formatAmount, getCurrencySymbol } = useExpenses();
   const { theme } = useTheme();
   const cardsRef = useRef([]);
 
@@ -85,8 +85,8 @@ const DashboardPage = () => {
           )}
         </div>
         <h3 className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-2">{title}</h3>
-        <p className="text-3xl font-bold text-gray-900 dark:text-white">
-          ${typeof value === 'number' ? value.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : value}
+        <p className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white">
+          {formatAmount(value)}
         </p>
         <div className="mt-4 h-1 w-full bg-gray-200 dark:bg-slate-700 rounded-full overflow-hidden">
           <div className={`h-full bg-linear-to-r ${gradient} rounded-full`} style={{width: '70%'}}></div>
@@ -281,7 +281,7 @@ const DashboardPage = () => {
                 </div>
                 <div className="text-right">
                   <p className="text-lg font-bold text-red-600 dark:text-red-400">
-                    -${parseFloat(transaction.amount).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                    -{formatAmount(transaction.amount)}
                   </p>
                   <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
                     {transaction.paymentMethod || 'Cash'}

@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { useExpenses } from '../context/ExpenseContext';
 
 const ExpenseListPage = () => {
-  const { expenses, deleteExpense, updateExpense } = useExpenses();
+  const { expenses, deleteExpense, updateExpense, formatAmount } = useExpenses();
   const [searchTerm, setSearchTerm] = useState('');
   const [filterCategory, setFilterCategory] = useState('All');
   const [sortBy, setSortBy] = useState('date-desc');
@@ -135,7 +135,7 @@ const ExpenseListPage = () => {
           <div className="flex items-center justify-between mb-2">
             <p className="text-3xl">💸</p>
             <div className="text-right">
-              <p className="text-3xl font-bold">${totalAmount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>
+              <p className="text-2xl sm:text-3xl font-bold">{formatAmount(totalAmount)}</p>
               <p className="text-sm text-red-100">Total Amount</p>
             </div>
           </div>
@@ -144,8 +144,8 @@ const ExpenseListPage = () => {
           <div className="flex items-center justify-between mb-2">
             <p className="text-3xl">💳</p>
             <div className="text-right">
-              <p className="text-3xl font-bold">
-                ${filteredExpenses.length > 0 ? (totalAmount / filteredExpenses.length).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : '0.00'}
+              <p className="text-2xl sm:text-3xl font-bold">
+                {filteredExpenses.length > 0 ? formatAmount(totalAmount / filteredExpenses.length) : formatAmount(0)}
               </p>
               <p className="text-sm text-purple-100">Average Expense</p>
             </div>
@@ -158,7 +158,7 @@ const ExpenseListPage = () => {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
           {/* Search */}
           <div>
-            <label className="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2 flex items-center gap-2">
+            <label className="flex items-center gap-2 text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">
               <span className="text-lg">🔍</span> Search
             </label>
             <input
@@ -326,7 +326,7 @@ const ExpenseListPage = () => {
                             {expense.paymentMethod}
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-bold text-red-600 dark:text-red-400">
-                            ${parseFloat(expense.amount).toFixed(2)}
+                            {formatAmount(expense.amount)}
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap text-right text-sm">
                             <button
@@ -369,8 +369,8 @@ const ExpenseListPage = () => {
                       {new Date(expense.date).toLocaleDateString()}
                     </p>
                   </div>
-                  <p className="text-xl font-bold text-red-600 dark:text-red-400">
-                    ${parseFloat(expense.amount).toFixed(2)}
+                  <p className="text-lg sm:text-xl font-bold text-red-600 dark:text-red-400">
+                    {formatAmount(expense.amount)}
                   </p>
                 </div>
                 <div className="flex items-center justify-between">

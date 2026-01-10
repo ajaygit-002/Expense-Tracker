@@ -1,18 +1,31 @@
 import { useState } from 'react';
-import { useExpenses, useTheme } from '../context/ExpenseContext';
+import { useExpenses, useTheme, currencies } from '../context/ExpenseContext';
 
 const SettingsPage = () => {
-  const { income, setIncome, expenses, clearAllExpenses } = useExpenses();
+  const { income, setIncome, expenses, clearAllExpenses, currency, setCurrency, getCurrencySymbol, formatAmount } = useExpenses();
   const { theme, toggleTheme } = useTheme();
   const [tempIncome, setTempIncome] = useState(income);
   const [showClearModal, setShowClearModal] = useState(false);
   const [showSuccess, setShowSuccess] = useState('');
+  const [searchCurrency, setSearchCurrency] = useState('');
 
   const handleSaveIncome = () => {
     setIncome(parseFloat(tempIncome));
     setShowSuccess('Income updated successfully!');
     setTimeout(() => setShowSuccess(''), 3000);
   };
+
+  const handleCurrencyChange = (currencyCode) => {
+    setCurrency(currencyCode);
+    setShowSuccess(`Currency changed to ${currencyCode}!`);
+    setTimeout(() => setShowSuccess(''), 3000);
+  };
+
+  const filteredCurrencies = currencies.filter(curr => 
+    curr.name.toLowerCase().includes(searchCurrency.toLowerCase()) ||
+    curr.code.toLowerCase().includes(searchCurrency.toLowerCase()) ||
+    curr.country.toLowerCase().includes(searchCurrency.toLowerCase())
+  );
 
   const handleClearData = () => {
     clearAllExpenses();
@@ -129,7 +142,7 @@ const SettingsPage = () => {
             <div className="flex gap-3">
               <div className="relative flex-1">
                 <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 dark:text-gray-400 text-lg">
-                  $
+                  {getCurrencySymbol()}
                 </span>
                 <input
                   type="number"
@@ -146,6 +159,47 @@ const SettingsPage = () => {
               >
                 Save
               </button>
+            </div>
+          </div>
+
+          {/* Currency Selector */}
+          <div className="mt-8 pt-8 border-t border-gray-200 dark:border-slate-700">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
+              Current Currency: <span className="font-bold">{currencies.find(c => c.code === currency)?.flag} {currency}</span>
+            </label>
+            <div className="relative mb-4">
+              <input
+                type="text"
+                placeholder="Search country or currency..."
+                value={searchCurrency}
+                onChange={(e) => setSearchCurrency(e.target.value)}
+                className="w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all"
+              />
+              <span className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400">🔍</span>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 max-h-96 overflow-y-auto pr-2">
+              {filteredCurrencies.map((curr) => (
+                <button
+                  key={curr.code}
+                  onClick={() => handleCurrencyChange(curr.code)}
+                  className={`p-3 rounded-lg border-2 text-left transition-all hover:scale-105 ${
+                    currency === curr.code
+                      ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/30'
+                      : 'border-gray-200 dark:border-slate-600 bg-white dark:bg-slate-700 hover:border-blue-300'
+                  }`}
+                >
+                  <div className="flex items-center justify-between">
+                    <div className="flex-1">
+                      <div className="flex items-center gap-2 mb-1">
+                        <span className="text-2xl">{curr.flag}</span>
+                        <span className="font-bold text-gray-900 dark:text-white">{curr.code}</span>
+                      </div>
+                      <p className="text-xs text-gray-600 dark:text-gray-400 truncate">{curr.country}</p>
+                    </div>
+                    <span className="text-xl font-bold text-gray-700 dark:text-gray-300">{curr.symbol}</span>
+                  </div>
+                </button>
+              ))}
             </div>
           </div>
         </div>
@@ -191,8 +245,8 @@ const SettingsPage = () => {
             <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">Total Expenses</p>
           </div>
           <div className="text-center p-4 bg-purple-50 dark:bg-purple-900/20 rounded-xl">
-            <p className="text-3xl font-bold text-purple-600 dark:text-purple-400">
-              ${stats.totalAmount.toFixed(0)}
+            <p className="text-2xl sm:text-3xl font-bold text-purple-600 dark:text-purple-400">
+              {formatAmount(stats.totalAmount)}
             </p>
             <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">Total Spent</p>
           </div>
