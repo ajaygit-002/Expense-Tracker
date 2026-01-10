@@ -3,11 +3,14 @@ import { createRoot } from 'react-dom/client'
 import './index.css'
 import App from './App.jsx'
 import { ExpenseProvider } from './context/ExpenseContext.jsx'
+import { ThemeProvider } from './context/ThemeContext.jsx'
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
-    <ExpenseProvider>
-      <App />
-    </ExpenseProvider>
+    <ThemeProvider>
+      <ExpenseProvider>
+        <App />
+      </ExpenseProvider>
+    </ThemeProvider>
   </StrictMode>,
 )
