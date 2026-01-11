@@ -1,0 +1,124 @@
+.dashboard {
+  min-height: 100vh;
+  padding-bottom: var(--spacing-2xl);
+  position: relative;
+}
+
+.stats-section {
+  margin-bottom: var(--spacing-2xl);
+}
+
+.action-section {
+  margin-bottom: var(--spacing-2xl);
+  display: flex;
+  justify-content: center;
+}
+
+.add-transaction-btn {
+  padding: 1rem 2rem;
+  font-size: 1.125rem;
+  font-weight: 600;
+  box-shadow: var(--shadow-lg);
+  transition: all var(--transition-base);
+}
+
+.add-transaction-btn:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-xl);
+}
+
+.btn-icon {
+  font-size: 1.25rem;
+}
+
+.charts-section {
+  margin-bottom: var(--spacing-2xl);
+}
+
+.transactions-section {
+  margin-bottom: var(--spacing-2xl);
+}
+
+.section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--spacing-xl);
+  padding-bottom: var(--spacing-md);
+  border-bottom: 2px solid var(--border-color);
+}
+
+.section-title {
+  font-size: 1.875rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.transaction-count {
+  font-size: 0.9375rem;
+  color: var(--text-tertiary);
+  background: var(--bg-secondary);
+  padding: 0.5rem 1rem;
+  border-radius: var(--radius-full);
+  font-weight: 600;
+}
+
+.transactions-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+}
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--spacing-2xl);
+  text-align: center;
+  gap: var(--spacing-lg);
+}
+
+.empty-state-image {
+  width: 200px;
+  height: 200px;
+  object-fit: cover;
+  border-radius: var(--radius-xl);
+  opacity: 0.7;
+  margin-bottom: var(--spacing-md);
+}
+
+.empty-state h3 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.empty-state p {
+  font-size: 1rem;
+  color: var(--text-secondary);
+  max-width: 400px;
+}
+
+@media (max-width: 768px) {
+  .section-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--spacing-sm);
+  }
+  
+  .section-title {
+    font-size: 1.5rem;
+  }
+  
+  .add-transaction-btn {
+    width: 100%;
+    padding: 0.875rem;
+    font-size: 1rem;
+  }
+  
+  .empty-state-image {
+    width: 150px;
+    height: 150px;
+  }
+}
