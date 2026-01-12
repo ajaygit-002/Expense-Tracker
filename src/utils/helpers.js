@@ -1,11 +1,25 @@
 import { format, startOfMonth, endOfMonth, isWithinInterval, subMonths } from 'date-fns';
 
+const currencyLocales = {
+  USD: 'en-US',
+  EUR: 'de-DE',
+  GBP: 'en-GB',
+  INR: 'en-IN',
+  AUD: 'en-AU',
+  CAD: 'en-CA',
+  JPY: 'ja-JP',
+  CNY: 'zh-CN',
+  SGD: 'en-SG',
+  CHF: 'de-CH'
+};
+
 export const formatCurrency = (amount, currency = 'USD') => {
-  return new Intl.NumberFormat('en-US', {
+  const locale = currencyLocales[currency] || 'en-US';
+  return new Intl.NumberFormat(locale, {
     style: 'currency',
-    currency: currency,
+    currency,
     minimumFractionDigits: 2
-  }).format(amount);
+  }).format(Number(amount) || 0);
 };
 
 export const formatDate = (date, formatStr = 'MMM dd, yyyy') => {

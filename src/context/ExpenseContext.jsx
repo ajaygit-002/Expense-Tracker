@@ -34,10 +34,15 @@ export const ExpenseProvider = ({ children }) => {
     const allExpenses = storageService.getAllExpenses();
     const allCategories = storageService.getAllCategories();
     const currentSettings = storageService.getSettings();
+    const mergedSettings = {
+      currency: 'USD',
+      theme: 'light',
+      ...currentSettings
+    };
     
     setExpenses(allExpenses);
     setCategories(allCategories);
-    setSettings(currentSettings);
+    setSettings(mergedSettings);
   };
 
   const updateStatistics = () => {
@@ -69,6 +74,11 @@ export const ExpenseProvider = ({ children }) => {
     setSettings(updatedSettings);
   };
 
+  const updateCurrency = (currency) => {
+    const updatedSettings = storageService.updateSettings({ currency });
+    setSettings(updatedSettings);
+  };
+
   const value = {
     expenses,
     categories,
@@ -78,6 +88,7 @@ export const ExpenseProvider = ({ children }) => {
     updateExpense,
     deleteExpense,
     updateTheme,
+    updateCurrency,
     loadData
   };
 

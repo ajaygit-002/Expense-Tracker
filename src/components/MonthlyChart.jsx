@@ -2,14 +2,14 @@ import { useEffect, useRef } from 'react';
 import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend } from 'chart.js';
 import { Bar } from 'react-chartjs-2';
 import { useExpense } from '../context/ExpenseContext';
-import { getMonthlyData } from '../utils/helpers';
+import { getMonthlyData, formatCurrency } from '../utils/helpers';
 import gsap from 'gsap';
 import './Charts.css';
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
 const MonthlyChart = () => {
-  const { expenses } = useExpense();
+  const { expenses, settings } = useExpense();
   const chartRef = useRef(null);
   const monthlyData = getMonthlyData(expenses, 6);
 
@@ -73,6 +73,13 @@ const MonthlyChart = () => {
         },
         bodyFont: {
           size: 13
+        },
+        callbacks: {
+          label: function(context) {
+            const label = context.dataset.label || '';
+            const value = context.parsed.y || 0;
+            return `${label}: ${formatCurrency(value, settings.currency)}`;
+          }
         }
       }
     },
@@ -97,7 +104,7 @@ const MonthlyChart = () => {
             size: 11
           },
           callback: function(value) {
-            return '$' + value.toLocaleString();
+            return formatCurrency(value, settings.currency);
           }
         }
       }

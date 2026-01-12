@@ -3,7 +3,7 @@ import { useExpense } from '../context/ExpenseContext';
 import './Navbar.css';
 
 const Navbar = () => {
-  const { settings, updateTheme } = useExpense();
+  const { settings, updateTheme, updateCurrency } = useExpense();
   const [isScrolled, setIsScrolled] = useState(false);
 
   useEffect(() => {
@@ -24,6 +24,19 @@ const Navbar = () => {
     updateTheme(newTheme);
   };
 
+  const currencyOptions = [
+    'USD',
+    'EUR',
+    'GBP',
+    'INR',
+    'AUD',
+    'CAD',
+    'JPY',
+    'CNY',
+    'SGD',
+    'CHF'
+  ];
+
   return (
     <nav className={`navbar ${isScrolled ? 'scrolled' : ''}`}>
       <div className="container navbar-content">
@@ -33,6 +46,17 @@ const Navbar = () => {
         </div>
         
         <div className="navbar-actions">
+          <select
+            className="currency-select"
+            value={settings.currency}
+            onChange={(e) => updateCurrency(e.target.value)}
+            aria-label="Choose currency"
+          >
+            {currencyOptions.map(option => (
+              <option key={option} value={option}>{option}</option>
+            ))}
+          </select>
+
           <button 
             onClick={toggleTheme} 
             className="theme-toggle"

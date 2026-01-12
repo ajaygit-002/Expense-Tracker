@@ -2,13 +2,13 @@ import { useEffect, useRef } from 'react';
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
 import { Doughnut } from 'react-chartjs-2';
 import { useExpense } from '../context/ExpenseContext';
-import { getCategoryWiseData } from '../utils/helpers';
+import { getCategoryWiseData, formatCurrency } from '../utils/helpers';
 import gsap from 'gsap';
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
 const CategoryChart = () => {
-  const { expenses, categories } = useExpense();
+  const { expenses, categories, settings } = useExpense();
   const chartRef = useRef(null);
   const categoryData = getCategoryWiseData(expenses);
 
@@ -79,7 +79,7 @@ const CategoryChart = () => {
             const value = context.parsed || 0;
             const total = context.dataset.data.reduce((a, b) => a + b, 0);
             const percentage = ((value / total) * 100).toFixed(1);
-            return `${label}: $${value.toLocaleString()} (${percentage}%)`;
+            return `${label}: ${formatCurrency(value, settings.currency)} (${percentage}%)`;
           }
         }
       }

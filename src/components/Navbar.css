@@ -61,6 +61,27 @@
   gap: 1rem;
 }
 
+.currency-select {
+  min-width: 6rem;
+  padding: 0.45rem 0.75rem;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-color);
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+  font-weight: 600;
+  transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.currency-select:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15);
+}
+
+.currency-select:hover {
+  border-color: var(--primary-color);
+}
+
 .theme-toggle {
   width: 2.5rem;
   height: 2.5rem;

@@ -5,7 +5,7 @@ import gsap from 'gsap';
 import './ExpenseCard.css';
 
 const ExpenseCard = ({ expense, onEdit, onDelete, index }) => {
-  const { categories } = useExpense();
+  const { categories, settings } = useExpense();
   const cardRef = useRef(null);
   
   const category = categories.find(cat => cat.id === expense.category);
@@ -70,7 +70,7 @@ const ExpenseCard = ({ expense, onEdit, onDelete, index }) => {
       <div className="expense-card-right">
         <div className={`expense-amount ${expense.type}`}>
           {expense.type === 'income' ? '+' : '-'}
-          {formatCurrency(expense.amount)}
+          {formatCurrency(expense.amount, settings.currency)}
         </div>
         
         <div className="expense-actions">

@@ -5,7 +5,7 @@ import gsap from 'gsap';
 import './ExpenseForm.css';
 
 const ExpenseForm = ({ onClose, editingExpense = null }) => {
-  const { addExpense, updateExpense, categories } = useExpense();
+  const { addExpense, updateExpense, categories, settings } = useExpense();
   const modalRef = useRef(null);
   const [errors, setErrors] = useState({});
   const [formData, setFormData] = useState({
@@ -132,7 +132,7 @@ const ExpenseForm = ({ onClose, editingExpense = null }) => {
 
           <div className="form-row">
             <div className="input-group">
-              <label htmlFor="amount">Amount *</label>
+              <label htmlFor="amount">Amount * ({settings.currency})</label>
               <input
                 type="number"
                 id="amount"
